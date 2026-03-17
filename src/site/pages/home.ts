@@ -1,9 +1,13 @@
 import type { NavItem } from "../layout";
+import { getBase } from "../layout";
 
 /**
  * Home page: intro + list of demo links (demos only, not About/Contact).
  */
 export function renderHome(main: HTMLElement, demos: NavItem[]): void {
+  const base = getBase();
+  const href = (path: string) => (base === "/" ? path : base.replace(/\/$/, "") + path);
+
   const title = document.createElement("h1");
   title.className = "site__page-title";
   title.textContent = "Home";
@@ -27,7 +31,7 @@ export function renderHome(main: HTMLElement, demos: NavItem[]): void {
   for (const item of demos) {
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.href = item.href;
+    a.href = href(item.href);
     a.textContent = item.label;
     li.appendChild(a);
     list.appendChild(li);

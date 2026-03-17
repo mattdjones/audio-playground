@@ -24,11 +24,25 @@ export const DEMO_ITEMS: NavItem[] = [
   { id: "demos/effects-rack", label: "Effects Rack", href: "/demos/effects-rack/" },
 ];
 
+/** Base URL path (e.g. "" locally, "/audio-playground/" on GitHub Pages). From Vite. */
+export function getBase(): string {
+  return typeof import.meta.env !== "undefined" && typeof import.meta.env.BASE_URL === "string"
+    ? import.meta.env.BASE_URL
+    : "/";
+}
+
 /**
  * Normalise pathname to a page id, or null if unknown.
+ * Strips the app base path so routing works under GitHub Pages (e.g. /audio-playground/).
  */
 export function pathnameToPageId(pathname: string): PageId | null {
-  const normalized = pathname.replace(/\/$/, "") || "/";
+  const base = getBase();
+  const baseTrimmed = base.replace(/\/$/, "");
+  let path = pathname.replace(/\/$/, "") || "/";
+  if (baseTrimmed && (path === baseTrimmed || path.startsWith(baseTrimmed + "/"))) {
+    path = path.slice(baseTrimmed.length) || "/";
+  }
+  const normalized = path || "/";
   if (normalized === "/") return "home";
   if (normalized === "/about") return "about";
   if (normalized === "/contact") return "contact";
@@ -57,8 +71,9 @@ export function createLayout(currentPageId: PageId | null): {
 
   const logo = document.createElement("div");
   logo.className = "site__logo";
+  const base = getBase();
   const logoLink = document.createElement("a");
-  logoLink.href = "/";
+  logoLink.href = base === "/" ? "/" : base.replace(/\/$/, "") + "/";
   logoLink.textContent = "Audio Playgrounds";
   logo.appendChild(logoLink);
   navInner.appendChild(logo);
@@ -66,10 +81,11 @@ export function createLayout(currentPageId: PageId | null): {
   const menu = document.createElement("ul");
   menu.className = "site__menu";
 
+  const href = (path: string) => (base === "/" ? path : base.replace(/\/$/, "") + path);
   for (const item of NAV_TOP) {
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.href = item.href;
+    a.href = href(item.href);
     a.textContent = item.label;
     if (item.id === currentPageId) {
       a.setAttribute("aria-current", "page");
@@ -95,7 +111,7 @@ export function createLayout(currentPageId: PageId | null): {
     const subLi = document.createElement("li");
     subLi.setAttribute("role", "none");
     const a = document.createElement("a");
-    a.href = item.href;
+    a.href = href(item.href);
     a.textContent = item.label;
     a.setAttribute("role", "menuitem");
     if (item.id === currentPageId) {
