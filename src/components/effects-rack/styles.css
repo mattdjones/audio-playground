@@ -69,7 +69,7 @@
 }
 
 .effects-rack__input-section {
-  padding: 1rem;
+  padding: 0.5rem 0.75rem;
   background: var(--er-bg-elevated);
   border: 1px solid var(--er-border);
   border-radius: var(--er-radius);
@@ -78,15 +78,15 @@
 .effects-rack__source-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .effects-rack__file-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
   background: var(--er-bg-panel);
   border: 1px solid var(--er-border);
   border-radius: var(--er-radius);
@@ -149,34 +149,31 @@
 }
 
 .effects-rack__source-info {
-  margin: 0.75rem 0 0 0;
+  margin: 0.4rem 0 0 0;
   font-size: 0.8rem;
   color: var(--er-text-muted);
 }
 
 .effects-rack__recording-ready {
-  margin: 0.5rem 0 0 0;
+  margin: 0.35rem 0 0 0;
   font-size: 0.85rem;
   color: var(--er-accent);
 }
 
-/* Vintage-style level meter */
+/* Level meter: far right of input section, indicator on top of text, bar = 75% of wrap height */
 .effects-rack__level-wrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.effects-rack__level-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--er-text-muted);
+  gap: 0.2rem;
+  margin-left: auto;
+  height: 192px;
 }
 
 .effects-rack__level-meter {
-  width: 12px;
-  height: 48px;
+  width: 28px;
+  flex: 0 0 75%;
+  min-height: 144px;
   background: #0a0a0a;
   border: 1px solid var(--er-border);
   border-radius: 2px;
@@ -184,6 +181,14 @@
   display: flex;
   align-items: flex-end;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.effects-rack__level-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--er-text-muted);
+  flex-shrink: 0;
 }
 
 .effects-rack__level-meter-fill {
@@ -202,9 +207,9 @@
 .effects-rack__controls-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .effects-rack__btn--play {
@@ -221,23 +226,109 @@
   color: var(--er-bg);
 }
 
+/* Master volume: same DJ fader style as Daft Punk filter, with numerical scale; extended width */
 .effects-rack__vol-wrap {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-width: 220px;
 }
 
 .effects-rack__vol-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--er-text-muted);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
-.effects-rack__vol-slider {
-  width: 100px;
-  accent-color: var(--er-accent);
+.effects-rack__vol-fader-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+  width: 100%;
+  min-width: 200px;
+}
+
+.effects-rack__vol-fader {
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  box-sizing: content-box;
+}
+
+.effects-rack__vol-fader::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__vol-fader::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 24px;
+  margin-top: -6px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__vol-fader::-moz-range-track {
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__vol-fader::-moz-range-thumb {
+  width: 14px;
+  height: 24px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__vol-fader::-webkit-slider-thumb:active,
+.effects-rack__vol-fader::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+.effects-rack__vol-fader-scale {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--er-text-muted);
+  line-height: 1;
+}
+
+.effects-rack__vol-fader-scale-tick {
+  flex: 0 0 auto;
 }
 
 .effects-rack__btn--record {
@@ -360,8 +451,94 @@
   padding: 0.6rem 0.75rem;
 }
 
-.effects-rack__unit--lexicon224 .effects-rack__param-slider {
+/* Lexicon 224: same DJ fader style as other effects + numerical scale, width unchanged (4.5rem) */
+.effects-rack__param--lexicon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.effects-rack__param-fader-wrap--lexicon {
   width: 4.5rem;
+  min-width: 4.5rem;
+}
+
+.effects-rack__param-fader--lexicon {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  box-sizing: content-box;
+}
+
+.effects-rack__param-fader--lexicon::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__param-fader--lexicon::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 16px;
+  margin-top: -4px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 2px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__param-fader--lexicon::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__param-fader--lexicon::-moz-range-thumb {
+  width: 10px;
+  height: 16px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 2px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__param-fader--lexicon::-webkit-slider-thumb:active,
+.effects-rack__param-fader--lexicon::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+.effects-rack__param-fader-scale--lexicon {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 4px;
+  box-sizing: border-box;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--er-text-muted);
+  line-height: 1;
 }
 
 /* Daft Punk Filter – 90s French house / filter unit vibe */
@@ -444,10 +621,70 @@
   font-weight: 500;
 }
 
+/* EL Compressor sliders: same DJ fader style as Daft Punk filter, smaller (width unchanged) */
 .effects-rack__param-slider--el {
   width: 100%;
   min-width: 4rem;
-  accent-color: #888;
+  height: 24px;
+  margin: 0;
+  padding: 0 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  box-sizing: content-box;
+}
+
+.effects-rack__param-slider--el::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__param-slider--el::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 16px;
+  margin-top: -4px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 2px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__param-slider--el::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__param-slider--el::-moz-range-thumb {
+  width: 10px;
+  height: 16px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 2px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__param-slider--el::-webkit-slider-thumb:active,
+.effects-rack__param-slider--el::-moz-range-thumb:active {
+  cursor: grabbing;
 }
 
 .effects-rack__param--el-ratio {

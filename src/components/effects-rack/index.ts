@@ -340,17 +340,33 @@ function render(): void {
 
   const volWrap = document.createElement("div");
   volWrap.className = "effects-rack__vol-wrap";
-  const volLabel = document.createElement("label");
+  const volLabel = document.createElement("span");
   volLabel.className = "effects-rack__vol-label";
-  volLabel.textContent = "Master";
+  volLabel.textContent = "Master Volume";
+  const volFaderWrap = document.createElement("div");
+  volFaderWrap.className = "effects-rack__vol-fader-wrap";
   const volSlider = document.createElement("input");
   volSlider.type = "range";
   volSlider.min = "0";
   volSlider.max = "100";
   volSlider.value = String(Math.round(masterVolume * 100));
-  volSlider.className = "effects-rack__vol-slider";
-  volLabel.appendChild(volSlider);
-  volWrap.appendChild(volLabel);
+  volSlider.className = "effects-rack__vol-fader";
+  volSlider.setAttribute("aria-label", "Master volume");
+  const volScale = document.createElement("div");
+  volScale.className = "effects-rack__vol-fader-scale";
+  volScale.setAttribute("aria-hidden", "true");
+  for (const n of [0, 25, 50, 75, 100]) {
+    const tick = document.createElement("span");
+    tick.className = "effects-rack__vol-fader-scale-tick";
+    tick.textContent = String(n);
+    volScale.appendChild(tick);
+  }
+  volFaderWrap.append(volSlider, volScale);
+  volWrap.append(volLabel, volFaderWrap);
+  volSlider.addEventListener("input", () => {
+    masterVolume = Number(volSlider.value) / 100;
+    ensureMasterGain();
+  });
   controlsRow.appendChild(volWrap);
 
   const recordBtn = document.createElement("button");
@@ -366,15 +382,15 @@ function render(): void {
   const levelMeterWrap = document.createElement("div");
   levelMeterWrap.className = "effects-rack__level-wrap";
   levelMeterWrap.setAttribute("aria-label", "Output level");
-  const levelMeterLabel = document.createElement("span");
-  levelMeterLabel.className = "effects-rack__level-label";
-  levelMeterLabel.textContent = "Level";
   const levelMeter = document.createElement("div");
   levelMeter.className = "effects-rack__level-meter";
   const levelMeterFill = document.createElement("div");
   levelMeterFill.className = "effects-rack__level-meter-fill";
   levelMeter.appendChild(levelMeterFill);
-  levelMeterWrap.append(levelMeterLabel, levelMeter);
+  const levelMeterLabel = document.createElement("span");
+  levelMeterLabel.className = "effects-rack__level-label";
+  levelMeterLabel.textContent = "Level";
+  levelMeterWrap.append(levelMeter, levelMeterLabel);
   controlsRow.appendChild(levelMeterWrap);
 
   inputSection.appendChild(controlsRow);
@@ -678,56 +694,82 @@ function render(): void {
       const paramsRow = document.createElement("div");
       paramsRow.className = "effects-rack__unit-params";
       const p = unit.params;
-      const mixLabel = document.createElement("label");
-      mixLabel.className = "effects-rack__param";
-      mixLabel.innerHTML = `Mix <output>${Math.round(p.mix * 100)}</output>%`;
-      const mixSlider = document.createElement("input");
-      mixSlider.type = "range";
-      mixSlider.min = "0";
-      mixSlider.max = "100";
-      mixSlider.value = String(Math.round(p.mix * 100));
-      mixSlider.className = "effects-rack__param-slider";
-      mixLabel.appendChild(mixSlider);
-      mixSlider.addEventListener("input", () => {
-        const v = Number(mixSlider.value) / 100;
-        unit.params.mix = v;
-        (mixLabel.querySelector("output") as HTMLElement).textContent = `${Math.round(v * 100)}%`;
-        effectChainNodes[index]?.setParams?.({ mix: v });
-      });
-      const decayLabel = document.createElement("label");
-      decayLabel.className = "effects-rack__param";
-      decayLabel.innerHTML = `Decay <output>${p.decay.toFixed(1)}</output>s`;
-      const decaySlider = document.createElement("input");
-      decaySlider.type = "range";
-      decaySlider.min = "0.5";
-      decaySlider.max = "6";
-      decaySlider.step = "0.1";
-      decaySlider.value = String(p.decay);
-      decaySlider.className = "effects-rack__param-slider";
-      decayLabel.appendChild(decaySlider);
-      decaySlider.addEventListener("input", () => {
-        const v = Number(decaySlider.value);
-        unit.params.decay = v;
-        (decayLabel.querySelector("output") as HTMLElement).textContent = `${v.toFixed(1)}s`;
-        effectChainNodes[index]?.setParams?.({ decay: v });
-      });
-      const preLabel = document.createElement("label");
-      preLabel.className = "effects-rack__param";
-      preLabel.innerHTML = `Pre <output>${(p.preDelay * 1000).toFixed(0)}</output>ms`;
-      const preSlider = document.createElement("input");
-      preSlider.type = "range";
-      preSlider.min = "0";
-      preSlider.max = "100";
-      preSlider.value = String(p.preDelay * 1000);
-      preSlider.className = "effects-rack__param-slider";
-      preLabel.appendChild(preSlider);
-      preSlider.addEventListener("input", () => {
-        const v = Number(preSlider.value) / 1000;
-        unit.params.preDelay = v;
-        (preLabel.querySelector("output") as HTMLElement).textContent = `${(v * 1000).toFixed(0)}ms`;
-        effectChainNodes[index]?.setParams?.({ preDelay: v });
-      });
-      paramsRow.append(mixLabel, decayLabel, preLabel);
+
+      const addLexiconParam = (
+        labelText: string,
+        valueDisplay: string,
+        min: string,
+        max: string,
+        step: string,
+        value: string,
+        scaleTicks: number[],
+        getUpdate: (v: number) => void,
+        format: (v: number) => string
+      ): void => {
+        const label = document.createElement("label");
+        label.className = "effects-rack__param effects-rack__param--lexicon";
+        label.innerHTML = `${labelText} <output>${valueDisplay}</output>`;
+        const faderWrap = document.createElement("div");
+        faderWrap.className = "effects-rack__param-fader-wrap effects-rack__param-fader-wrap--lexicon";
+        const slider = document.createElement("input");
+        slider.type = "range";
+        slider.min = min;
+        slider.max = max;
+        slider.step = step;
+        slider.value = value;
+        slider.className = "effects-rack__param-fader effects-rack__param-fader--lexicon";
+        const scale = document.createElement("div");
+        scale.className = "effects-rack__param-fader-scale effects-rack__param-fader-scale--lexicon";
+        scale.setAttribute("aria-hidden", "true");
+        for (const n of scaleTicks) {
+          const tick = document.createElement("span");
+          tick.className = "effects-rack__param-fader-scale-tick";
+          tick.textContent = String(n);
+          scale.appendChild(tick);
+        }
+        faderWrap.append(slider, scale);
+        label.appendChild(faderWrap);
+        paramsRow.appendChild(label);
+        slider.addEventListener("input", () => {
+          const v = Number(slider.value);
+          getUpdate(v);
+          (label.querySelector("output") as HTMLElement).textContent = format(v);
+        });
+      };
+
+      addLexiconParam(
+        "Mix",
+        `${Math.round(p.mix * 100)}%`,
+        "0", "100", "1", String(Math.round(p.mix * 100)),
+        [0, 25, 50, 75, 100],
+        (v) => {
+          unit.params.mix = v / 100;
+          effectChainNodes[index]?.setParams?.({ mix: v / 100 });
+        },
+        (v) => `${Math.round(v)}%`
+      );
+      addLexiconParam(
+        "Decay",
+        `${p.decay.toFixed(1)}s`,
+        "0.5", "6", "0.1", String(p.decay),
+        [1, 2, 3, 4, 5, 6],
+        (v) => {
+          unit.params.decay = v;
+          effectChainNodes[index]?.setParams?.({ decay: v });
+        },
+        (v) => `${Number(v).toFixed(1)}s`
+      );
+      addLexiconParam(
+        "Pre",
+        `${(p.preDelay * 1000).toFixed(0)}ms`,
+        "0", "100", "1", String(p.preDelay * 1000),
+        [0, 25, 50, 75, 100],
+        (v) => {
+          unit.params.preDelay = v / 1000;
+          effectChainNodes[index]?.setParams?.({ preDelay: v / 1000 });
+        },
+        (v) => `${Math.round(v)}ms`
+      );
       unitEl.appendChild(paramsRow);
     } else if (unit.type === "daftpunkfilter") {
       const paramsRow = document.createElement("div");
