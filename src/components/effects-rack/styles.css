@@ -1,0 +1,561 @@
+/* Effects Rack – scoped, studio rack aesthetic */
+.effects-rack {
+  --er-bg: #0f0f0f;
+  --er-bg-elevated: #1a1a1a;
+  --er-bg-panel: #141414;
+  --er-border: #2a2a2a;
+  --er-text: #e8e8e8;
+  --er-text-muted: #888;
+  --er-accent: #c4a574;
+  --er-danger: #b85450;
+  --er-radius: 6px;
+  --er-font: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  color: var(--er-text);
+  font-family: var(--er-font);
+  line-height: 1.5;
+  background: var(--er-bg);
+  max-width: 720px;
+  margin: 0;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.effects-rack *,
+.effects-rack *::before,
+.effects-rack *::after {
+  box-sizing: border-box;
+}
+
+.effects-rack__inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.effects-rack__header {
+  margin-bottom: 1.5rem;
+}
+
+.effects-rack__title {
+  font-size: 1.75rem;
+  font-weight: 400;
+  margin: 0 0 0.25rem 0;
+  color: var(--er-text);
+}
+
+.effects-rack__subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__section {
+  margin-bottom: 1.5rem;
+}
+
+.effects-rack__section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--er-text-muted);
+  margin: 0 0 0.75rem 0;
+}
+
+.effects-rack__input-section {
+  padding: 1rem;
+  background: var(--er-bg-elevated);
+  border: 1px solid var(--er-border);
+  border-radius: var(--er-radius);
+}
+
+.effects-rack__source-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.effects-rack__file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--er-bg-panel);
+  border: 1px solid var(--er-border);
+  border-radius: var(--er-radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: border-color 0.15s;
+}
+
+.effects-rack__file-label:hover {
+  border-color: var(--er-accent);
+}
+
+.effects-rack__file-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.effects-rack__file-text {
+  color: var(--er-text);
+}
+
+.effects-rack__btn {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--er-radius);
+  cursor: pointer;
+  border: 1px solid var(--er-border);
+  background: var(--er-bg-panel);
+  color: var(--er-text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.effects-rack__btn:hover:not(:disabled) {
+  color: var(--er-text);
+  border-color: var(--er-accent);
+}
+
+.effects-rack__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.effects-rack__btn--secondary {
+  /* same as default */
+}
+
+.effects-rack__btn--add {
+  border-style: dashed;
+  color: var(--er-accent);
+}
+
+.effects-rack__btn--add:hover {
+  border-color: var(--er-accent);
+  background: rgba(196, 165, 116, 0.08);
+}
+
+.effects-rack__source-info {
+  margin: 0.75rem 0 0 0;
+  font-size: 0.8rem;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__recording-ready {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--er-accent);
+}
+
+/* Vintage-style level meter */
+.effects-rack__level-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.effects-rack__level-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__level-meter {
+  width: 12px;
+  height: 48px;
+  background: #0a0a0a;
+  border: 1px solid var(--er-border);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.effects-rack__level-meter-fill {
+  width: 100%;
+  height: 0%;
+  min-height: 2px;
+  background: #2d5c2d;
+  border-radius: 0 0 2px 2px;
+  transition: height 0.05s ease-out, background 0.1s;
+}
+
+.effects-rack__level-meter-fill--hot {
+  background: #8b2020;
+}
+
+.effects-rack__controls-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.effects-rack__btn--play {
+  padding: 0.5rem 1.25rem;
+  background: var(--er-accent);
+  color: var(--er-bg);
+  border-color: var(--er-accent);
+  font-weight: 500;
+}
+
+.effects-rack__btn--play:hover:not(:disabled) {
+  background: #d4b884;
+  border-color: #d4b884;
+  color: var(--er-bg);
+}
+
+.effects-rack__vol-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.effects-rack__vol-label {
+  font-size: 0.8rem;
+  color: var(--er-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.effects-rack__vol-slider {
+  width: 100px;
+  accent-color: var(--er-accent);
+}
+
+.effects-rack__btn--record {
+  padding: 0.5rem 1rem;
+  border-color: var(--er-border);
+  color: var(--er-text-muted);
+}
+
+.effects-rack__btn--record:hover:not(:disabled) {
+  color: var(--er-text);
+  border-color: var(--er-accent);
+}
+
+.effects-rack__recording-indicator {
+  font-size: 0.85rem;
+  color: var(--er-danger);
+  margin-left: 0.5rem;
+}
+
+.effects-rack__download-wrap {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.effects-rack__btn--download {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.effects-rack__download-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.25rem;
+  min-width: 11rem;
+  padding: 0.25rem 0;
+  background: var(--er-bg-elevated);
+  border: 1px solid var(--er-border);
+  border-radius: var(--er-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: none;
+  z-index: 10;
+}
+
+.effects-rack__download-menu--open {
+  display: block;
+}
+
+.effects-rack__download-menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--er-text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.effects-rack__download-menu-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Rack shell – looks like a studio rack */
+.effects-rack__rack-section {
+  padding: 1rem;
+  background: linear-gradient(180deg, #1c1c1c 0%, #0d0d0d 100%);
+  border: 1px solid var(--er-border);
+  border-radius: var(--er-radius);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.effects-rack__shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  min-height: 2rem;
+}
+
+/* Each unit = 1U rack unit style */
+.effects-rack__unit {
+  background: linear-gradient(180deg, #252525 0%, #141414 50%, #0f0f0f 100%);
+  border: 1px solid #333;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+/* Lexicon 224 – mimic physical unit: dark panel, silver bezel, hardware feel */
+.effects-rack__unit--lexicon224 {
+  background: linear-gradient(180deg, #1e1e1e 0%, #151515 40%, #0d0d0d 100%);
+  border: 1px solid #4a4a4a;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.effects-rack__unit--lexicon224 .effects-rack__unit-face {
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-bottom: 1px solid #333;
+  padding: 0.5rem 0.75rem;
+}
+
+.effects-rack__unit--lexicon224 .effects-rack__unit-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #c8c8c8;
+  text-transform: uppercase;
+}
+
+.effects-rack__unit--lexicon224 .effects-rack__unit-params {
+  background: linear-gradient(180deg, #141414 0%, #0f0f0f 100%);
+  border-top: 1px solid #2a2a2a;
+  padding: 0.6rem 0.75rem;
+}
+
+.effects-rack__unit--lexicon224 .effects-rack__param-slider {
+  width: 4.5rem;
+}
+
+/* Daft Punk Filter – 90s French house / filter unit vibe */
+.effects-rack__unit--daftpunkfilter {
+  background: linear-gradient(180deg, #1a1c1e 0%, #121416 40%, #0c0e10 100%);
+  border: 1px solid #3a3d42;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.effects-rack__unit--daftpunkfilter .effects-rack__unit-face {
+  background: linear-gradient(180deg, #222428 0%, #181a1e 100%);
+  border-bottom: 1px solid #2a2d32;
+  padding: 0.5rem 0.75rem;
+}
+
+.effects-rack__unit--daftpunkfilter .effects-rack__unit-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #b8bcc4;
+  text-transform: uppercase;
+}
+
+.effects-rack__unit--daftpunkfilter .effects-rack__unit-params {
+  background: linear-gradient(180deg, #101214 0%, #0c0e10 100%);
+  border-top: 1px solid #25282c;
+  padding: 0.6rem 0.75rem;
+}
+
+.effects-rack__unit-face {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  min-height: 2.5rem;
+}
+
+.effects-rack__unit-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--er-text);
+}
+
+/* Bypass: right of rack unit, green when active (effect on), red when inactive (bypassed). Standard for all effects. */
+.effects-rack__unit-bypass {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.effects-rack__bypass-btn {
+  font: inherit;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.55rem;
+  min-width: 2.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+/* Active (effect on): green like a physical "on" indicator */
+.effects-rack__bypass-btn[aria-pressed="false"] {
+  background: #1a3d1a;
+  color: #6ed66e;
+  border-color: #2a5a2a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 6px rgba(110, 214, 110, 0.25);
+}
+
+.effects-rack__bypass-btn[aria-pressed="false"]:hover {
+  background: #225522;
+  color: #7ee87e;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 8px rgba(110, 214, 110, 0.35);
+}
+
+/* Inactive (bypassed): red like a physical "off" / bypass indicator */
+.effects-rack__bypass-btn[aria-pressed="true"] {
+  background: #3d1a1a;
+  color: #d66e6e;
+  border-color: #5a2a2a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 4px rgba(214, 110, 110, 0.2);
+}
+
+.effects-rack__bypass-btn[aria-pressed="true"]:hover {
+  background: #452020;
+  color: #e87e7e;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 6px rgba(214, 110, 110, 0.3);
+}
+
+/* Power switch (remove): right of bypass, standard for all racks */
+.effects-rack__unit-remove {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  color: var(--er-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.effects-rack__unit-remove:hover {
+  background: linear-gradient(180deg, #3a2020 0%, #2a1515 100%);
+  color: var(--er-danger);
+  border-color: #5a2a2a;
+  box-shadow: 0 0 6px rgba(184, 84, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.effects-rack__unit-params {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid var(--er-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.effects-rack__param {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__param output {
+  min-width: 2.5rem;
+  color: var(--er-text);
+}
+
+.effects-rack__param-slider {
+  width: 5rem;
+  accent-color: var(--er-accent);
+}
+
+.effects-rack__add-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.effects-rack__add-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.25rem;
+  min-width: 12rem;
+  padding: 0.25rem 0;
+  background: var(--er-bg-elevated);
+  border: 1px solid var(--er-border);
+  border-radius: var(--er-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: none;
+  z-index: 10;
+}
+
+.effects-rack__add-menu--open {
+  display: block;
+}
+
+.effects-rack__add-menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--er-text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.effects-rack__add-menu-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.effects-rack__add-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--er-text-muted);
+}

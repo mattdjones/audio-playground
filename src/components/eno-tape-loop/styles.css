@@ -1,0 +1,477 @@
+/* Eno Tape Loop – scoped so the component can be dropped into any page */
+.eno-tape-loop {
+  --eno-bg: #0f0f0f;
+  --eno-bg-elevated: #1a1a1a;
+  --eno-border: #2a2a2a;
+  --eno-text: #e8e8e8;
+  --eno-text-muted: #888;
+  --eno-accent: #c4a574;
+  --eno-accent-hover: #d4b884;
+  --eno-danger: #b85450;
+  --eno-radius: 6px;
+  --eno-font-sans: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+  --eno-font-serif: "Instrument Serif", Georgia, serif;
+
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  color: var(--eno-text);
+  font-family: var(--eno-font-sans);
+  line-height: 1.5;
+  background: var(--eno-bg);
+  max-width: 720px;
+  margin: 0;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.eno-tape-loop *,
+.eno-tape-loop *::before,
+.eno-tape-loop *::after {
+  box-sizing: border-box;
+}
+
+.eno-tape-loop__inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.eno-tape-loop .header {
+  margin-bottom: 2rem;
+}
+
+.eno-tape-loop .title {
+  font-family: var(--eno-font-serif);
+  font-size: 1.75rem;
+  font-weight: 400;
+  margin: 0 0 0.25rem 0;
+  color: var(--eno-text);
+}
+
+.eno-tape-loop .subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--eno-text-muted);
+}
+
+.eno-tape-loop .section {
+  margin-bottom: 1.5rem;
+}
+
+.eno-tape-loop .file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--eno-bg-elevated);
+  border: 1px solid var(--eno-border);
+  border-radius: var(--eno-radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.eno-tape-loop .file-label:hover {
+  border-color: var(--eno-accent);
+  background: #222;
+}
+
+.eno-tape-loop .file-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.eno-tape-loop .file-label-text {
+  font-size: 0.9rem;
+}
+
+.eno-tape-loop .play-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.eno-tape-loop .master-volume-label {
+  font-size: 0.8rem;
+  color: var(--eno-text-muted);
+}
+
+.eno-tape-loop .master-volume-slider {
+  width: 100px;
+  accent-color: var(--eno-accent);
+}
+
+.eno-tape-loop .btn-play {
+  font-family: var(--eno-font-sans);
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  background: var(--eno-accent);
+  color: var(--eno-bg);
+  border: none;
+  border-radius: var(--eno-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.eno-tape-loop .btn-play:hover:not(:disabled) {
+  background: var(--eno-accent-hover);
+}
+
+.eno-tape-loop .btn-play:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.eno-tape-loop .btn-record {
+  font-family: var(--eno-font-sans);
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  background: transparent;
+  color: var(--eno-text-muted);
+  border: 1px solid var(--eno-border);
+  border-radius: var(--eno-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.eno-tape-loop .btn-record:hover:not(:disabled) {
+  color: var(--eno-text);
+  border-color: var(--eno-accent);
+}
+
+.eno-tape-loop .btn-record:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.eno-tape-loop .recording-indicator {
+  font-size: 0.85rem;
+  color: var(--eno-danger);
+  margin-left: 0.25rem;
+}
+
+.eno-tape-loop .download-wrap {
+  position: relative;
+}
+
+.eno-tape-loop .btn-download-trigger {
+  font-family: var(--eno-font-sans);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--eno-bg-elevated);
+  color: var(--eno-text);
+  border: 1px solid var(--eno-border);
+  border-radius: var(--eno-radius);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.eno-tape-loop .btn-download-trigger:hover {
+  border-color: var(--eno-accent);
+}
+
+.eno-tape-loop .download-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.25rem;
+  min-width: 11rem;
+  padding: 0.25rem 0;
+  background: var(--eno-bg-elevated);
+  border: 1px solid var(--eno-border);
+  border-radius: var(--eno-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  display: none;
+}
+
+.eno-tape-loop .download-menu--open {
+  display: block;
+}
+
+.eno-tape-loop .download-menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--eno-text);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.eno-tape-loop .download-menu-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.eno-tape-loop .download-menu-item:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.eno-tape-loop .track-list-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--eno-text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+.eno-tape-loop .track-list {
+  flex: 1;
+}
+
+.eno-tape-loop .track-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.eno-tape-loop .track-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  background: var(--eno-bg-elevated);
+  border: 1px solid var(--eno-border);
+  border-radius: var(--eno-radius);
+  overflow: hidden;
+}
+
+.eno-tape-loop .rack-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0.35rem 0.5rem;
+  background: linear-gradient(180deg, #252525 0%, #141414 50%, #0d0d0d 100%);
+  border-bottom: 1px solid var(--eno-border);
+  min-height: 2.5rem;
+}
+
+.eno-tape-loop .rack-name-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  max-width: 10rem;
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--eno-border);
+  margin-right: 0.5rem;
+}
+
+.eno-tape-loop .rack-name-block .rack-label {
+  margin-bottom: 0.1rem;
+}
+
+.eno-tape-loop .rack-track-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--eno-text);
+}
+
+.eno-tape-loop .rack-duration {
+  font-size: 0.65rem;
+  color: var(--eno-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.eno-tape-loop .rack-control-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0 0.4rem;
+  border-right: 1px solid var(--eno-border);
+}
+
+.eno-tape-loop .rack-control-block:last-of-type {
+  border-right: none;
+}
+
+.eno-tape-loop .rack-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--eno-text-muted);
+  text-transform: uppercase;
+}
+
+.eno-tape-loop .rack-fader-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 36px;
+}
+
+.eno-tape-loop .rack-fader {
+  width: 36px;
+  height: 20px;
+  margin: 0 -8px;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  transform: rotate(-90deg);
+  cursor: ns-resize;
+}
+
+.eno-tape-loop .rack-fader::-webkit-slider-runnable-track {
+  height: 6px;
+  background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 100%);
+  border: 1px solid #333;
+  border-radius: 3px;
+}
+
+.eno-tape-loop .rack-fader::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 20px;
+  margin-top: -7px;
+  background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 100%);
+  border: 1px solid #555;
+  border-radius: 2px;
+  cursor: grab;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.eno-tape-loop .rack-fader::-moz-range-track {
+  height: 6px;
+  background: #2a2a2a;
+  border: 1px solid #333;
+  border-radius: 3px;
+}
+
+.eno-tape-loop .rack-fader::-moz-range-thumb {
+  width: 12px;
+  height: 20px;
+  background: #3a3a3a;
+  border: 1px solid #555;
+  border-radius: 2px;
+  cursor: grab;
+}
+
+.eno-tape-loop .rack-knob-block {
+  padding: 0 0.35rem;
+}
+
+.eno-tape-loop .rack-knob {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2a2a2a 0%, #0d0d0d 50%, #1a1a1a 100%);
+  border: 1px solid #333;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.eno-tape-loop .rack-knob-face {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #1a1a1a 0%, #0a0a0a 100%);
+  border: 1px solid #222;
+  position: relative;
+}
+
+.eno-tape-loop .rack-knob-indicator {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 6px;
+  margin-left: -1px;
+  margin-top: -6px;
+  background: var(--eno-accent);
+  border-radius: 1px;
+  transform-origin: 1px 6px;
+  transform: rotate(0deg);
+  box-shadow: 0 0 4px rgba(196, 165, 116, 0.4);
+}
+
+.eno-tape-loop .rack-btn-remove {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--eno-text-muted);
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.eno-tape-loop .rack-btn-remove:hover {
+  color: var(--eno-danger);
+  border-color: var(--eno-danger);
+  background: rgba(184, 84, 80, 0.15);
+}
+
+.eno-tape-loop .waveform-container {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.35rem 0.5rem;
+}
+
+.eno-tape-loop .waveform-wrapper {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.eno-tape-loop .waveform-canvas {
+  width: 100%;
+  height: 48px;
+  display: block;
+  border-radius: 2px;
+  cursor: crosshair;
+  background: var(--eno-bg);
+  border: 1px solid var(--eno-border);
+}
+
+.eno-tape-loop .waveform-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--eno-accent);
+  pointer-events: none;
+  transition: left 0.05s linear;
+}
+
+.eno-tape-loop .empty-state {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--eno-text-muted);
+  font-style: italic;
+}
+
+.eno-tape-loop .footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  font-size: 0.8rem;
+  color: var(--eno-text-muted);
+}
