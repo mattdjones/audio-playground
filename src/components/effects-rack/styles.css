@@ -316,7 +316,7 @@
 .effects-rack__shell {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 1rem;
   margin-bottom: 1rem;
   min-height: 2rem;
 }
@@ -392,6 +392,220 @@
   background: linear-gradient(180deg, #101214 0%, #0c0e10 100%);
   border-top: 1px solid #25282c;
   padding: 0.6rem 0.75rem;
+}
+
+/* EL Compressor – Empirical Labs Distressor style: black panel, silver/white labels, big-knob feel */
+.effects-rack__unit--elcompressor {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #3a3a3a;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.effects-rack__unit--elcompressor .effects-rack__unit-face {
+  background: linear-gradient(180deg, #252525 0%, #161616 100%);
+  border-bottom: 1px solid #2a2a2a;
+  padding: 0.5rem 0.75rem;
+}
+
+.effects-rack__unit--elcompressor .effects-rack__unit-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #e0e0e0;
+  text-transform: uppercase;
+}
+
+.effects-rack__unit--elcompressor .effects-rack__unit-params {
+  background: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
+  border-top: 1px solid #2a2a2a;
+  padding: 0.75rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: 0.6rem 1rem;
+}
+
+.effects-rack__param--el {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__param--el output {
+  color: #d0d0d0;
+  font-weight: 500;
+}
+
+.effects-rack__param-slider--el {
+  width: 100%;
+  min-width: 4rem;
+  accent-color: #888;
+}
+
+.effects-rack__param--el-ratio {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.effects-rack__param-ratio-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__param-ratio-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.effects-rack__param-ratio-btn {
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #404040;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  color: var(--er-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.effects-rack__param-ratio-btn:hover {
+  background: linear-gradient(180deg, #353535 0%, #252525 100%);
+  color: var(--er-text);
+  border-color: #505050;
+}
+
+.effects-rack__param-ratio-btn--active {
+  background: linear-gradient(180deg, #404040 0%, #282828 100%);
+  color: #e8e8e8;
+  border-color: var(--er-accent);
+  box-shadow: inset 0 0 0 1px rgba(196, 165, 116, 0.2);
+}
+
+/* Daft Punk Filter: horizontal DJ-style fader with numerical scale */
+.effects-rack__param-fader-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+  width: 100%;
+  min-width: 80%;
+}
+
+.effects-rack__param-label {
+  font-size: 0.75rem;
+  color: var(--er-text-muted);
+}
+
+.effects-rack__param-label output {
+  min-width: 2.5rem;
+  color: var(--er-text);
+}
+
+/* Horizontal fader slot – DJ mixer style groove */
+.effects-rack__param-fader {
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  box-sizing: content-box;
+}
+
+.effects-rack__param-fader::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__param-fader::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 24px;
+  margin-top: -6px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__param-fader::-moz-range-track {
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #080808 100%);
+  border: 1px solid #2a2d32;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.effects-rack__param-fader::-moz-range-thumb {
+  width: 14px;
+  height: 24px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 40%, #2a2a2a 100%);
+  border: 1px solid #4a4a4a;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  cursor: grab;
+}
+
+.effects-rack__param-fader::-webkit-slider-thumb:active,
+.effects-rack__param-fader::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+/* Numerical scale underneath (0, 25, 50, 75, 100) */
+.effects-rack__param-fader-scale {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--er-text-muted);
+  line-height: 1;
+}
+
+.effects-rack__param-fader-scale-tick {
+  flex: 0 0 auto;
+}
+
+.effects-rack__unit--daftpunkfilter .effects-rack__param--fader-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  width: 100%;
 }
 
 .effects-rack__unit-face {

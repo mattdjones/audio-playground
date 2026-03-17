@@ -17,6 +17,12 @@ import {
   type DaftPunkFilterParams,
 } from "./daftpunk-filter";
 import {
+  createELCompressor,
+  EL_COMPRESSOR_DEFAULT_PARAMS,
+  EL_COMPRESSOR_RATIO_OPTIONS,
+  type ELCompressorParams,
+} from "./el-compressor";
+import {
   createLexicon224Reverb,
   LEXICON224_DEFAULT_PARAMS,
   type Lexicon224Params,
@@ -58,7 +64,8 @@ let recordingTimerIntervalId: number | null = null;
 /** Effect unit in the rack. */
 type RackUnit =
   | { id: string; type: "lexicon224"; params: Lexicon224Params; bypass: boolean }
-  | { id: string; type: "daftpunkfilter"; params: DaftPunkFilterParams; bypass: boolean };
+  | { id: string; type: "daftpunkfilter"; params: DaftPunkFilterParams; bypass: boolean }
+  | { id: string; type: "elcompressor"; params: ELCompressorParams; bypass: boolean };
 
 let rackUnits: RackUnit[] = [];
 
@@ -66,6 +73,7 @@ let rackUnits: RackUnit[] = [];
 const EFFECT_TYPES = [
   { type: "lexicon224" as const, label: "Lexicon 224 Reverb" },
   { type: "daftpunkfilter" as const, label: "Daft Punk Filter" },
+  { type: "elcompressor" as const, label: "EL Compressor (Distressor)" },
 ];
 
 /** Effect chain: source → chain[0] → … → chain[n] → masterGain. Rebuilt when units change. */
@@ -180,6 +188,12 @@ function rebuildEffectChain(): void {
       filter.output.connect(wetGain);
       setParams = filter.setParams as (p: unknown) => void;
       disposeInner = filter.dispose;
+    } else if (unit.type === "elcompressor") {
+      const comp = createELCompressor(ctx, unit.params);
+      wrapperInput.connect(comp.input);
+      comp.output.connect(wetGain);
+      setParams = comp.setParams as (p: unknown) => void;
+      disposeInner = comp.dispose;
     } else {
       continue;
     }
@@ -633,7 +647,9 @@ function render(): void {
         ? "Lexicon 224"
         : unit.type === "daftpunkfilter"
           ? "Daft Punk Filter"
-          : "Effect";
+          : unit.type === "elcompressor"
+            ? "EL Compressor"
+            : "Effect";
     const bypassWrap = document.createElement("div");
     bypassWrap.className = "effects-rack__unit-bypass";
     const bypassBtn = document.createElement("button");
@@ -717,24 +733,107 @@ function render(): void {
       const paramsRow = document.createElement("div");
       paramsRow.className = "effects-rack__unit-params";
       const p = unit.params;
+      const faderRow = document.createElement("div");
+      faderRow.className = "effects-rack__param effects-rack__param--fader-row";
       const openLabel = document.createElement("label");
-      openLabel.className = "effects-rack__param";
+      openLabel.className = "effects-rack__param-label";
       openLabel.innerHTML = `Open <output>${Math.round(p.open * 100)}</output>%`;
+      const faderWrap = document.createElement("div");
+      faderWrap.className = "effects-rack__param-fader-wrap";
       const openSlider = document.createElement("input");
       openSlider.type = "range";
       openSlider.min = "0";
       openSlider.max = "100";
       openSlider.value = String(Math.round(p.open * 100));
-      openSlider.className = "effects-rack__param-slider";
-      openSlider.title = "Muffled ← → Crystal clear";
-      openLabel.appendChild(openSlider);
+      openSlider.className = "effects-rack__param-fader";
+      openSlider.title = "Muffled (left) ← → Crystal clear (right)";
+      openSlider.setAttribute("aria-label", "Filter open: muffled to crystal clear");
+      const scale = document.createElement("div");
+      scale.className = "effects-rack__param-fader-scale";
+      scale.setAttribute("aria-hidden", "true");
+      for (const n of [0, 25, 50, 75, 100]) {
+        const tick = document.createElement("span");
+        tick.className = "effects-rack__param-fader-scale-tick";
+        tick.textContent = String(n);
+        scale.appendChild(tick);
+      }
+      faderWrap.append(openSlider, scale);
+      faderRow.append(openLabel, faderWrap);
       openSlider.addEventListener("input", () => {
         const v = Number(openSlider.value) / 100;
         unit.params.open = v;
         (openLabel.querySelector("output") as HTMLElement).textContent = `${Math.round(v * 100)}%`;
         effectChainNodes[index]?.setParams?.({ open: v });
       });
-      paramsRow.appendChild(openLabel);
+      paramsRow.appendChild(faderRow);
+      unitEl.appendChild(paramsRow);
+    } else if (unit.type === "elcompressor") {
+      const paramsRow = document.createElement("div");
+      paramsRow.className = "effects-rack__unit-params";
+      const p = unit.params;
+
+      const addParam = (
+        labelText: string,
+        valueDisplay: string,
+        min: string,
+        max: string,
+        step: string,
+        value: string,
+        getUpdate: (v: number) => Partial<ELCompressorParams>,
+        format: (v: number) => string
+      ): void => {
+        const label = document.createElement("label");
+        label.className = "effects-rack__param effects-rack__param--el";
+        label.innerHTML = `${labelText} <output>${valueDisplay}</output>`;
+        const slider = document.createElement("input");
+        slider.type = "range";
+        slider.min = min;
+        slider.max = max;
+        slider.step = step;
+        slider.value = value;
+        slider.className = "effects-rack__param-slider effects-rack__param-slider--el";
+        label.appendChild(slider);
+        slider.addEventListener("input", () => {
+          const v = Number(slider.value);
+          Object.assign(unit.params, getUpdate(v));
+          (label.querySelector("output") as HTMLElement).textContent = format(v);
+          effectChainNodes[index]?.setParams?.(getUpdate(v));
+        });
+        paramsRow.appendChild(label);
+      };
+
+      addParam("Input", Math.round(p.input * 100).toString(), "0", "100", "1", String(Math.round(p.input * 100)), (v) => ({ input: v / 100 }), (v) => `${Math.round(v)}%`);
+      addParam("Thresh", String(p.threshold), "-40", "0", "1", String(p.threshold), (v) => ({ threshold: v }), (v) => `${Math.round(v)} dB`);
+      addParam("Attack", (p.attack * 1000).toFixed(0), "1", "200", "1", String(p.attack * 1000), (v) => ({ attack: v / 1000 }), (v) => `${Math.round(v)} ms`);
+      addParam("Release", (p.release * 1000).toFixed(0), "10", "1000", "5", String(p.release * 1000), (v) => ({ release: v / 1000 }), (v) => `${Math.round(v)} ms`);
+      addParam("Output", Math.round(p.output * 100).toString(), "0", "100", "1", String(Math.round(p.output * 100)), (v) => ({ output: v / 100 }), (v) => `${Math.round(v)}%`);
+
+      const ratioRow = document.createElement("div");
+      ratioRow.className = "effects-rack__param effects-rack__param--el-ratio";
+      const ratioLabel = document.createElement("span");
+      ratioLabel.className = "effects-rack__param-ratio-label";
+      ratioLabel.textContent = "Ratio";
+      ratioRow.appendChild(ratioLabel);
+      const ratioWrap = document.createElement("div");
+      ratioWrap.className = "effects-rack__param-ratio-btns";
+      for (const r of EL_COMPRESSOR_RATIO_OPTIONS) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "effects-rack__param-ratio-btn";
+        btn.textContent = r === 20 ? "20" : `${r}:1`;
+        if (unit.params.ratio === r) btn.classList.add("effects-rack__param-ratio-btn--active");
+        btn.addEventListener("click", () => {
+          unit.params.ratio = r;
+          ratioWrap.querySelectorAll(".effects-rack__param-ratio-btn").forEach((b) => b.classList.remove("effects-rack__param-ratio-btn--active"));
+          btn.classList.add("effects-rack__param-ratio-btn--active");
+          effectChainNodes[index]?.setParams?.({ ratio: r });
+          render();
+        });
+        ratioWrap.appendChild(btn);
+      }
+      ratioRow.appendChild(ratioWrap);
+      paramsRow.appendChild(ratioRow);
+
       unitEl.appendChild(paramsRow);
     }
 
@@ -788,6 +887,16 @@ function render(): void {
             id: crypto.randomUUID(),
             type: "daftpunkfilter",
             params: { ...DAFTPUNK_FILTER_DEFAULT_PARAMS },
+            bypass: false,
+          },
+        ];
+      } else if (type === "elcompressor") {
+        rackUnits = [
+          ...rackUnits,
+          {
+            id: crypto.randomUUID(),
+            type: "elcompressor",
+            params: { ...EL_COMPRESSOR_DEFAULT_PARAMS },
             bypass: false,
           },
         ];
